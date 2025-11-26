@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="tb_axis_hdr_add_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="tb_axis_hdr_add" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="597.501 ns"></ZoomEndTime>
+      <Cursor1Time time="916.533 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="273"></NameColumnWidth>
+      <ValueColumnWidth column_width="60"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="11" />
+   <wvobject type="logic" fp_name="/tb_axis_hdr_add/clk">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_hdr_add/rstn">
+      <obj_property name="ElementShortName">rstn</obj_property>
+      <obj_property name="ObjectShortName">rstn</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_hdr_add/start_pulse">
+      <obj_property name="ElementShortName">start_pulse</obj_property>
+      <obj_property name="ObjectShortName">start_pulse</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_hdr_add/s_tdata">
+      <obj_property name="ElementShortName">s_tdata[31:0]</obj_property>
+      <obj_property name="ObjectShortName">s_tdata[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_hdr_add/s_tvalid">
+      <obj_property name="ElementShortName">s_tvalid</obj_property>
+      <obj_property name="ObjectShortName">s_tvalid</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_hdr_add/s_tready">
+      <obj_property name="ElementShortName">s_tready</obj_property>
+      <obj_property name="ObjectShortName">s_tready</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_hdr_add/s_tlast">
+      <obj_property name="ElementShortName">s_tlast</obj_property>
+      <obj_property name="ObjectShortName">s_tlast</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_hdr_add/m_tdata">
+      <obj_property name="ElementShortName">m_tdata[31:0]</obj_property>
+      <obj_property name="ObjectShortName">m_tdata[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_hdr_add/m_tvalid">
+      <obj_property name="ElementShortName">m_tvalid</obj_property>
+      <obj_property name="ObjectShortName">m_tvalid</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_hdr_add/m_tready">
+      <obj_property name="ElementShortName">m_tready</obj_property>
+      <obj_property name="ObjectShortName">m_tready</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_hdr_add/m_tlast">
+      <obj_property name="ElementShortName">m_tlast</obj_property>
+      <obj_property name="ObjectShortName">m_tlast</obj_property>
+   </wvobject>
+</wave_config>
