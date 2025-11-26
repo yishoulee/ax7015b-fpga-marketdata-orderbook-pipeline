@@ -1,0 +1,41 @@
+# Vivado project internals (for any stage/*/vivado)
+**/vivado/*.runs/
+**/vivado/*.gen/
+**/vivado/*.cache/
+**/vivado/*.hw/
+**/vivado/*.ip_user_files/
+**/vivado/*.sim/
+**/vivado/.Xil/
+**/vivado/*.data/
+
+# Old-style top-level Vivado dirs (if they ever exist)
+*.srcs/
+*.gen/
+*.runs/
+*.cache/
+*.hw/
+*.ip_user_files/
+*.sim/
+.Xil/
+
+# Generated junk
+**/ipshared/
+**/hw_handoff/
+**/ui/
+**/doc/
+*.dcp
+*_sim_netlist.*
+*.stub.*
+*.hwdef
+*.bda
+*.bxml
+*.jou
+*.log
+*.str
+*.tmp
+
+# OS/editor noise
+.DS_Store
+*~
+*.swp
+*.swo
