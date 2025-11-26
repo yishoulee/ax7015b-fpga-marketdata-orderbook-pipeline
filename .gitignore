@@ -39,3 +39,7 @@
 *~
 *.swp
 *.swo
+
+# Do not track Vivado GUI project files; they are local-only and path fragile
+**/vivado/*.xpr
+**/vivado/*.tcl
