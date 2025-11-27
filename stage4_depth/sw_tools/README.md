@@ -25,10 +25,10 @@ pip install pyserial pandas
 `replay_uart.py` sends 32-byte records over UART from a text log. It also writes `depth_cpu_ref.csv` in the current folder, with columns `[update_id, price_fp, qty_fp]` matching FPGA float bit patterns.
 
 ```bash
-cd stage4_depth_normalize
+cd stage4_depth/python/
 python3 replay_uart.py path/to/binance_depth.log \
-	--mode accelerated --speed 5 \
-	--port /dev/ttyUSB0 --baud 921600 [--rtscts]
+  --mode accelerated --speed 5 \
+  --port /dev/ttyUSB0 --baud 921600 [--rtscts]
 ```
 
 Notes:
@@ -45,7 +45,7 @@ Notes:
 Run it directly (ensure both CSVs are present in this folder), or edit the constants to point elsewhere:
 
 ```bash
-python3 depth_stage4_compare.py
+python3 depth_stage4_compare.py --ref depth_cpu_ref.csv --test normalized_out.csv
 ```
 
 It prints total compared, matches, match rate, and the first mismatches.

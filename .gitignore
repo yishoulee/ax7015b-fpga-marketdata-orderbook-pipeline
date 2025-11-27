@@ -8,8 +8,8 @@
 **/vivado/.Xil/
 **/vivado/*.data/
 
-# Old-style top-level Vivado dirs (if they ever exist)
-*.srcs/
+# Vivado project dirs (top-level style used by exported projects)
+# Keep sources under *.srcs/, but ignore generated outputs
 *.gen/
 *.runs/
 *.cache/
@@ -41,5 +41,31 @@
 *.swo
 
 # Do not track Vivado GUI project files; they are local-only and path fragile
-**/vivado/*.xpr
-**/vivado/*.tcl
+# Prefer committing HDL, XDC, BD, and Tcl to recreate projects
+*.xpr
+
+# Allow common source artifacts (even if parent dirs are ignored elsewhere)
+!**/*.v
+!**/*.sv
+!**/*.vh
+!**/*.svh
+!**/*.vhd
+!**/*.vhdl
+!**/*.xdc
+!**/*.bd
+!**/*.coe
+!**/*.tcl
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.venv/
+.env
+.env.local
+.python-version
+
+# VS Code
+.vscode/
