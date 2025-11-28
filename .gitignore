@@ -30,7 +30,6 @@
 *.bda
 *.bxml
 *.jou
-*.log
 *.str
 *.tmp
 

@@ -1,63 +1,52 @@
-# Stage 3 — PL Timestamp Determination & UART Bridging
+# Stage 3 — PL Timestamp + UART → AXI Bridge
 
-This stage implements on-FPGA timestamping and latency measurement for incoming records, plus a UART bridge for serial ingress/egress. It is organized for a source-first flow (no GUI project files), so you can recreate Vivado projects deterministically.
+Stage 3 implements on-FPGA timestamping and a UART→AXI-Stream bridge that feeds later stages.
+
+Functions:
+
+- 64-bit PL timestamp counter (`pl_timestamp_counter.sv`).
+- Latency measurement (`latency_measure.sv`) between record arrival and downstream consumption.
+- UART receiver for fixed-size records (`uart_rx_serial.sv` / `.v`).
+- Record unpacker (`event_record_unpack.sv`).
+- AXI-Stream bridge / recorder (`uart_record_axis_bridge.sv`).
+- Simple test record generator (`test_record_gen.sv`).
+- Top-level harnesses:
+  - `top_stage3_timestamp.sv`: timestamping path.
+  - `top_stage3_serial.sv`: UART receive + unpack + AXIS output.
 
 ## Layout
-- `rtl/`: Synthesizable RTL
-  - `top_stage3_timestamp.sv`, `top_stage3_serial.sv`
-  - `pl_timestamp_counter.sv`, `latency_measure.sv`
-  - `event_record_unpack.sv`, `uart_record_axis_bridge.sv`
-  - `uart_rx_serial.sv`, `uart_rx_serial.v`, `test_record_gen.sv`
-- `constr/`: Constraints
-  - `ax7015b_stage3_timestamp.xdc`
-- `sim/`: Testbenches
-  - `tb_stage3_timestamp.sv`
-- `ip/`: IP configuration
-  - `ila_0/ila_0.xci` (Vivado will regenerate outputs)
 
-## What it does
-- Timestamp incoming records in PL using a free-running counter.
-- Measure pipeline latency between record ingress and processed output.
-- Bridge UART serial input to internal streams for testing or live feed integration.
-- Include an ILA core for on-chip debugging (re-generate products in Vivado).
+- `rtl/`
+  - `top_stage3_timestamp.sv`
+  - `top_stage3_serial.sv`
+  - `pl_timestamp_counter.sv`
+  - `latency_measure.sv`
+  - `event_record_unpack.sv`
+  - `uart_record_axis_bridge.sv`
+  - `uart_rx_serial.sv`, `uart_rx_serial.v`
+  - `test_record_gen.sv`
+- `constr/`
+  - `ax7015b_stage3_timestamp.xdc`: clock / pin constraints for AX7015B.
+- `sim/`
+  - `tb_stage3_timestamp.sv`: basic simulation harness (extend as needed).
+- `ip/`
+  - `ila_0/ila_0.xci`: ILA configuration for probing stream and timestamp signals.
 
-## Top modules
-- `top_stage3_timestamp.sv`: Primary integration top for timestamp + latency path.
-- `top_stage3_serial.sv`: Variant top emphasizing UART serial integration.
+## Vivado (GUI) quick start
 
-## Quick start (Vivado GUI)
-1. Create a new Vivado project (no sources initially), target your AX7015B board/part.
-2. Add sources: all files in `rtl/` as design sources; `sim/tb_stage3_timestamp.sv` as simulation source.
+1. Create a new project targeting the AX7015B part/board.
+2. Add all `rtl/*.sv` and `rtl/*.v` as design sources.
 3. Add constraints: `constr/ax7015b_stage3_timestamp.xdc`.
-4. Add IP: right-click IP Catalog → Add Repository (optional) or simply Add Sources → Add Or Create Design Sources → select `ip/ila_0/ila_0.xci`. Then “Generate Output Products”.
-5. Set top: choose `top_stage3_timestamp` (or `top_stage3_serial` as needed).
-6. Run Synthesis/Implementation and generate bitstream.
+4. Add IP:
+   - Add `ip/ila_0/ila_0.xci` as IP source and “Generate Output Products”.
+5. Set the top module:
+   - For timestamp testing: `top_stage3_timestamp`.
+   - For UART path: `top_stage3_serial`.
+6. Run synthesis/implementation and generate a bitstream.
+7. Program the board and use ILA to observe timestamps and record flow.
 
-## Simulation (xsim, non-GUI)
-From the repo root or this folder, you can run a minimal xsim flow (adjust paths if running from root):
+## Notes
 
-```bash
-# From stage3_timestamp_pl/
-mkdir -p build && cd build
-xvlog -sv ../rtl/*.sv ../sim/tb_stage3_timestamp.sv
-xvlog ../rtl/*.v
-xelab tb_stage3_timestamp -s tb
-xsim tb -run all
-```
-
-Notes:
-- If your Vivado version requires explicit include orders, pass files individually instead of globs.
-- Check module parameters (e.g., clock freq, baud rate, counter width) in RTL and set as needed.
-
-## Constraints
-`constr/ax7015b_stage3_timestamp.xdc` contains clock/IO constraints for the target board. Ensure UART pins and clock sources match your hardware. Update as required for your variant.
-
-## IP (ILA)
-The `ila_0.xci` is source-controlled. After opening the project, right-click the ILA core and “Generate Output Products”. No DCPs or generated files are committed by design.
-
-## Development tips
-- Keep source-only: do not commit `*.runs/`, `*.gen/`, `.Xil/`, `*.dcp`, logs, etc. The repo’s `.gitignore` already excludes them.
-- Prefer scripting (Tcl) for reproducible builds if you formalize this stage further.
-
-## Status
-Initial import with working RTL, XDC, testbench, and ILA config. Use `tb_stage3_timestamp.sv` as a starting point for simulation; use ILA in hardware for signal capture.
+- Only source-level artefacts and `.xci` are in Git; Vivado build outputs are not tracked.
+- The same XDC is reused in later PL stages; clone and adjust if you need stage-specific constraints.
+- Parameters (clock frequency, UART baud, widths) are set in RTL; adjust and rebuild as needed.

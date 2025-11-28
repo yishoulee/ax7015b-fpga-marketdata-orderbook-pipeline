@@ -1,76 +1,130 @@
+
 # Stage 4 — Depth Normalization (CPU reference and comparison)
 
-This stage includes reference scripts to decode packed depth events, replay logs over UART to feed hardware, and compare FPGA-captured events against a CPU reference CSV.
+This folder contains the host-side tools and sample data for Stage 4. It is used to:
+
+- Replay Binance depth logs over UART into the FPGA.
+- Capture and normalize CPU-side depth events.
+- Compare FPGA-captured events (from ILA CSV) against a CPU reference CSV.
+
+All scripts and data here are Stage-4 specific and standalone.
 
 ## Contents
-- `config.py`: UART defaults for replay (port, baud, RTS/CTS, timing mode).
-- `depth_ev_packed_decoder.py`: Simple decoder for packed depth events from an ILA CSV.
-- `depth_cpu_normalizer.py`: CPU-side depth event iterator/utilities (no CLI; import and use).
-- `depth_stage4_compare.py`: Comparison harness between FPGA ILA CSV and CPU reference CSV.
-- `replay_uart.py`: Replay a binance_depth.log over UART; also emits `depth_cpu_ref.csv` for comparison.
-- `depth_cpu_ref.csv`, `depth_stage4_small.csv`: Sample CSV files for quick testing.
+
+Scripts:
+
+- `config.py`  
+  Default UART settings for replay (`UART_PORT`, `UART_BAUDRATE`, `UART_RTSCTS`, default mode/speed).
+
+- `depth_ev_packed_decoder.py`  
+  Decoder for packed depth events from an ILA CSV (e.g. `pl_depth_parser/iladata.csv`). Produces a more readable CSV or prints decoded fields.
+
+- `depth_cpu_normalizer.py`  
+  CPU-side helpers to iterate and normalize Binance depth events. This is a library module (no CLI); import from other scripts.
+
+- `depth_stage4_compare.py`  
+  Main comparison harness between:
+  - FPGA ILA export (CSV),
+  - CPU reference CSV (`depth_cpu_ref.csv`),
+  using `depth_cpu_normalizer.py`.
+
+- `replay_uart.py`  
+  Replays a `binance_depth_*.log` file over UART and can emit a CPU reference CSV for comparison.
+
+Sample logs and CSVs (intentionally committed):
+
+- `binance_depth.log`  
+  Full Binance depth log (large).  
+  Lines: **542,023**
+
+- `binance_depth_ask_only.log`  
+  Small ask-only slice for quick tests.  
+  Lines: **20**
+
+- `binance_depth_small.log`  
+  Reduced log used during early experiments.  
+  Lines: **600**
+
+- `binance_depth_tiny.log`  
+  Minimal log that reliably fits into a single ILA capture window.  
+  Lines: **50**  
+  This is the only log that works cleanly end-to-end with the current FPGA + ILA setup.
+
+- `depth_cpu_ref.csv`  
+  CPU reference events corresponding to the tiny log.  
+  Lines: **50** (1 header + 49 data rows).
+
+- `depth_stage4_small.csv`  
+  Example FPGA ILA export (CSV) for a “small” run.  
+  Lines: **1,026** (Vivado header / radix rows + data rows).
+
+The row counts are there so you can:
+
+- Sanity-check that you are using the right file.
+- Detect partial captures or truncated transfers immediately.
+
+## ILA capture limitation (why tiny log only)
+
+The Stage-4 ILA is configured with a capture depth of 1024 samples. That means:
+
+- Large logs (`binance_depth.log`, `binance_depth_small.log`) cannot be fully captured in one window; you only see a slice of the stream.
+- The “tiny” log (`binance_depth_tiny.log`, 50 lines) is small enough that:
+  - The UART replay finishes,
+  - The FPGA processes all events,
+  - A single ILA capture window can cover the entire sequence for comparison.
+
+In practice:
+
+- Use `binance_depth_tiny.log` + `depth_cpu_ref.csv` for full CPU vs FPGA comparisons.
+- Use larger logs only for spot-checking behaviour in the ILA, not for full 1-to-1 comparisons.
 
 ## Prerequisites
+
 - Python 3.9+
-- Packages: `pyserial`, `pandas` (for compare/decoder)
+- Packages:
+  - `pyserial`
+  - `pandas`
+
+Install (example):
 
 ```bash
+cd stage4_depth/sw_tools
 pip install pyserial pandas
 ```
 
-## Usage
+(or use the Stage-2 `requirements.txt` if you want a shared environment).
 
-1) UART replay (produces CPU reference CSV)
+## Typical workflows
 
-`replay_uart.py` sends 32-byte records over UART from a text log. It also writes `depth_cpu_ref.csv` in the current folder, with columns `[update_id, price_fp, qty_fp]` matching FPGA float bit patterns.
+1. **Replay a tiny log and compare**
+    
+    - Replay tiny log over UART into the FPGA:
+        
+        ```bash
+        python replay_uart.py binance_depth_tiny.log
+        ```
+        
+        (or use your own CLI flags / config for UART port and baud from `config.py`.)
+        
+    - Capture FPGA output via ILA to `iladata.csv`.
+        
+    - Decode and compare:
+        
+        ```bash
+        python depth_ev_packed_decoder.py --ila_csv ../pl_depth_parser/iladata.csv \
+                                          --out decoded_fpga.csv
+        
+        python depth_stage4_compare.py --fpga decoded_fpga.csv \
+                                       --cpu depth_cpu_ref.csv
+        ```
+        
+2. **Use your own log**
+    
+    - Generate your own `*.log` using Stage 2 or another tool.
+        
+    - Count lines and keep it within what the ILA window can realistically see if you want full coverage (tiny log scale).
+        
+    - Replay it with `replay_uart.py` and repeat the ILA capture + decoder + compare steps.
+        
 
-```bash
-cd stage4_depth/python/
-python3 replay_uart.py path/to/binance_depth.log \
-  --mode accelerated --speed 5 \
-  --port /dev/ttyUSB0 --baud 921600 [--rtscts]
-```
-
-Notes:
-- CLI overrides `config.py` defaults. ENV vars `UART_PORT`, `UART_BAUDRATE`, `UART_RTSCTS` are also honored.
-- Input log lines should be: `ts_ns,updateId,side,price,qty` (lines starting with `#SNAP` are ignored).
-
-2) Compare FPGA ILA CSV vs CPU reference
-
-`depth_stage4_compare.py` reads filenames from constants at the top of the file:
-
-- `ILA_CSV = "depth_stage4_small.csv"`
-- `CPU_REF_CSV = "depth_cpu_ref.csv"`
-
-Run it directly (ensure both CSVs are present in this folder), or edit the constants to point elsewhere:
-
-```bash
-python3 depth_stage4_compare.py --ref depth_cpu_ref.csv --test normalized_out.csv
-```
-
-It prints total compared, matches, match rate, and the first mismatches.
-
-3) Decode packed depth field from an ILA CSV
-
-`depth_ev_packed_decoder.py` expects a file named `depth_stage4.csv`. Either rename/copy your CSV or change the script to your file name:
-
-```bash
-cp depth_stage4_small.csv depth_stage4.csv
-python3 depth_ev_packed_decoder.py
-```
-
-4) CPU normalizer utilities (no CLI)
-
-`depth_cpu_normalizer.py` currently exposes helpers like `iter_binance_depth_events(path)` and fixed-point conversions. Import it from another script or notebook to build a normalized CSV:
-
-```python
-from depth_cpu_normalizer import iter_binance_depth_events
-for ev in iter_binance_depth_events("binance_depth.jsonl"):
-		# ev.update_id, ev.side, ev.price_fp, ev.qty_fp
-		pass
-```
-
-## Notes
-- Keep `__pycache__/` out of version control (repo root .gitignore already excludes it).
-- Large datasets should live outside the repo or under a `data/` folder referenced by your scripts.
-- If you standardize this stage further, consider adding a small CLI wrapper and `requirements.txt` to pin versions.
+This folder is meant to be reproducible: you can run the scripts directly against the committed logs and CSVs without needing any external data.

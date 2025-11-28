@@ -1,19 +1,30 @@
 # Stage 4 — Depth Parsing & Normalization
 
-Stage 4 contains two parts:
+Stage 4 is a standalone stage with:
 
-- `sw_tools/`: reference tools to replay logs over UART, decode ILA exports, and compare CPU vs FPGA outputs.
-- `pl_depth_parser/`: synthesizable RTL for parsing packed depth events, plus ILA IP config and constraints.
+- `sw_tools/`: host-side scripts to replay logs over UART, generate CPU reference CSVs, and compare FPGA vs CPU output.
+- `pl_depth_parser/`: a self-contained Vivado project folder (source-first) for the PL depth parser and its ILA/constraints.
+
+Although some RTL started life in Stage 3, copies are kept here and modified to meet Stage 4’s goal. You can treat this folder as an independent unit for bring-up, testing, and publishing.
 
 ## Structure
+
 - `sw_tools/`
-  - replay, compare, and decoder scripts; see its README for usage
+  - Python scripts and sample logs/CSVs for Stage 4 experiments.
+  - See `sw_tools/README.md` for details and exact file counts.
 - `pl_depth_parser/`
-  - `rtl/` (SV/V sources), `constr/` (XDC), `ip/` (XCI only)
+  - `rtl/` — SystemVerilog RTL for the depth parser, shared types, and a Stage-4-specific top harness.
+  - `constr/` — AX7015B XDC constraints.
+  - `ip/` — ILA IP configuration (`ila_0.xci`) only.
+  - `iladata.csv` — example ILA CSV export used during testing.
 
-## Build notes
-- Python: install `pyserial` and `pandas`; run scripts from `sw_tools/`.
-- PL (Vivado): create a project, add `pl_depth_parser/rtl/*` as design sources, add `pl_depth_parser/constr/*.xdc`, add `pl_depth_parser/ip/ila_0/ila_0.xci` then “Generate Output Products”.
+## Typical usage
 
-## Rationale
-This layout keeps Stage 4 self-contained while separating software utilities from PL sources. It avoids cross-stage coupling and preserves any Stage 3–derived modifications used in Stage 4.
+1. Use `sw_tools/replay_uart.py` with one of the included `binance_depth_*.log` files to drive Stage 4 via UART.
+2. Capture the FPGA output via ILA into a CSV (e.g. `iladata.csv`).
+3. Run `sw_tools/depth_ev_packed_decoder.py` and `depth_stage4_compare.py` to decode / compare against CPU reference CSVs.
+
+Stage 4 is designed so that:
+
+- PL can be tested on its own in Vivado using `pl_depth_parser/`.
+- Host-side tools and sample logs in `sw_tools/` are sufficient to reproduce the tests without any external data.
