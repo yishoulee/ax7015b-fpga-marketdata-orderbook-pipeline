@@ -1,49 +1,117 @@
-# Vivado project internals (for any stage/*/vivado)
-**/vivado/*.runs/
-**/vivado/*.gen/
-**/vivado/*.cache/
-**/vivado/*.hw/
-**/vivado/*.ip_user_files/
-**/vivado/*.sim/
-**/vivado/.Xil/
-**/vivado/*.data/
-
-# Vivado project dirs (top-level style used by exported projects)
-# Keep sources under *.srcs/, but ignore generated outputs
-*.gen/
-*.runs/
-*.cache/
-*.hw/
-*.ip_user_files/
-*.sim/
-.Xil/
-
-# Generated junk
-**/ipshared/
-**/hw_handoff/
-**/ui/
-**/doc/
-*.dcp
-*_sim_netlist.*
-*.stub.*
-*.hwdef
-*.bda
-*.bxml
-*.jou
-*.str
-*.tmp
-
-# OS/editor noise
+###############################################################################
+# OS / editor / misc
+###############################################################################
 .DS_Store
+Thumbs.db
 *~
 *.swp
 *.swo
+.idea/
+.vscode/
+*.bak
 
-# Do not track Vivado GUI project files; they are local-only and path fragile
-# Prefer committing HDL, XDC, BD, and Tcl to recreate projects
-*.xpr
+###############################################################################
+# Python
+###############################################################################
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+ENV/
+.env
+.env.*
+.python-version
 
-# Allow common source artifacts (even if parent dirs are ignored elsewhere)
+###############################################################################
+# Vivado / Xilinx generated outputs (ignore anywhere in repo)
+###############################################################################
+# Core generated dirs
+**/.Xil/
+**/.cache/
+**/*.cache/
+**/*.gen/
+**/*.runs/
+**/*.sim/
+**/*.hw/
+**/*.ip_user_files/
+**/ipshared/
+**/xgui/
+**/ui/
+**/doc/
+**/hw_handoff/
+**/webtalk/
+
+# Vivado BD auto-generated IP products (regenerable; do not commit)
+**/*.srcs/**/bd/**/ip/**
+
+# IP packager temp / backups
+**/component.xml.bak
+**/packaged_ip/
+
+# Common generated files
+**/*.dcp
+**/*.dmp
+**/*.rpt
+**/*.rpx
+**/*.pb
+**/*.wdb
+**/*.wcfg.user
+**/*.str
+**/*.tmp
+**/*.old
+**/*.bxml
+**/*.bda
+**/*.hwdef
+**/*_sim_netlist.*
+**/*.stub.*
+**/*.stp
+**/*.xrf
+
+# Implementation outputs (usually huge / reproducible)
+**/*.bit
+**/*.ltx
+
+# Vivado GUI / local-machine project files
+**/*.xpr
+**/*.XPR
+**/*.jou
+**/vivado.jou
+**/vivado.log
+**/runme.log
+**/webtalk.log
+**/webtalk.jou
+**/usage_statistics_webtalk.html
+**/usage_statistics_webtalk.xml
+**/ip_upgrade.log
+
+###############################################################################
+# Vitis / XSCT / XSDK generated outputs
+###############################################################################
+**/vitis/.metadata/
+**/vitis/_ide/
+**/vitis/.analytics/
+**/vitis/.Xil/
+**/vitis/.rigel_lopper/
+**/vitis/**/vitis-comp.json
+**/vitis/**/compile_commands.json
+
+# lopper / platform export caches (can be regenerated)
+**/.rigel_lopper/
+**/lopper*.log
+**/lop-config.dts
+
+###############################################################################
+# Data captures / outputs you usually don't want in git
+###############################################################################
+# Ignore big live capture outputs (regenerate anytime)
+**/events.bin
+
+###############################################################################
+# Exceptions: files we DO want tracked even if patterns above would ignore them
+###############################################################################
+# Source RTL / constraints / BD / scripts / docs
 !**/*.v
 !**/*.sv
 !**/*.vh
@@ -52,19 +120,22 @@
 !**/*.vhdl
 !**/*.xdc
 !**/*.bd
-!**/*.coe
 !**/*.tcl
+!**/*.py
+!**/*.md
+!**/*.txt
+!**/*.coe
+!**/*.ini
+!**/makefile
+!**/Makefile
+!**/requirements.txt
 
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-.pytest_cache/
-.mypy_cache/
-.venv/
-.env
-.env.local
-.python-version
+# Keep known-good small regression binaries (offline reproducibility artifacts)
+!**/events_sample_*.bin
 
-# VS Code
-.vscode/
+# Keep hardware export for reproducibility (you are already committing these)
+!**/*.xsa
+
+# If you later decide to version boot images, uncomment these:
+# !**/BOOT.bin
+# !**/*.bif

@@ -1,0 +1,20 @@
+event_t v0 (bookTicker) binary contract
+
+Encoding:
+- 32 bytes per event
+- little-endian
+- struct.pack/unpack format: <8I  (8 x uint32)
+
+Scaling:
+- price_pips = round(price * 1e4)
+- qty_pips   = round(qty   * 1e4)
+
+Words (W0..W7):
+- W0: MAGIC = 0x30545645  ("EVT0")
+- W1: seq (uint32, increments per event starting at 0 for a file)
+- W2: update_id_u (uint32) from Binance bookTicker field "u"
+- W3: reserved (uint32, must be 0 in v0)
+- W4: bid_price_pips  (from field "b")
+- W5: bid_qty_pips    (from field "B")
+- W6: ask_price_pips  (from field "a")
+- W7: ask_qty_pips    (from field "A")
