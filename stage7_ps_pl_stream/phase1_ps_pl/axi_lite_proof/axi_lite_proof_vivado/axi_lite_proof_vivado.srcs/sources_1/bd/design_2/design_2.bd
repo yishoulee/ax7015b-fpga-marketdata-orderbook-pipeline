@@ -21,7 +21,8 @@
       },
       "myip_0": "",
       "proc_sys_reset_0": "",
-      "processing_system7_0": ""
+      "processing_system7_0": "",
+      "proc_sys_reset_1": ""
     },
     "ports": {
       "led_out_0": {
@@ -518,7 +519,7 @@
             "value": "100.000000"
           },
           "PCW_ACT_FPGA1_PERIPHERAL_FREQMHZ": {
-            "value": "10.000000"
+            "value": "150.000000"
           },
           "PCW_ACT_FPGA2_PERIPHERAL_FREQMHZ": {
             "value": "10.000000"
@@ -608,7 +609,7 @@
             "value": "100000000"
           },
           "PCW_CLK1_FREQ": {
-            "value": "10000000"
+            "value": "150000000"
           },
           "PCW_CLK2_FREQ": {
             "value": "10000000"
@@ -677,7 +678,7 @@
             "value": "1"
           },
           "PCW_EN_CLK1_PORT": {
-            "value": "0"
+            "value": "1"
           },
           "PCW_EN_CLK2_PORT": {
             "value": "0"
@@ -812,7 +813,7 @@
             "value": "1"
           },
           "PCW_EN_RST1_PORT": {
-            "value": "0"
+            "value": "1"
           },
           "PCW_EN_RST2_PORT": {
             "value": "0"
@@ -874,11 +875,14 @@
           "PCW_FCLK_CLK0_BUF": {
             "value": "TRUE"
           },
+          "PCW_FCLK_CLK1_BUF": {
+            "value": "FALSE"
+          },
           "PCW_FPGA0_PERIPHERAL_FREQMHZ": {
             "value": "100"
           },
           "PCW_FPGA1_PERIPHERAL_FREQMHZ": {
-            "value": "50"
+            "value": "150"
           },
           "PCW_FPGA2_PERIPHERAL_FREQMHZ": {
             "value": "50"
@@ -887,6 +891,9 @@
             "value": "50"
           },
           "PCW_FPGA_FCLK0_ENABLE": {
+            "value": "1"
+          },
+          "PCW_FPGA_FCLK1_ENABLE": {
             "value": "1"
           },
           "PCW_GP0_EN_MODIFIABLE_TXN": {
@@ -1659,6 +1666,14 @@
             }
           }
         }
+      },
+      "proc_sys_reset_1": {
+        "vlnv": "xilinx.com:ip:proc_sys_reset:5.0",
+        "ip_revision": "17",
+        "xci_name": "design_2_proc_sys_reset_1_0",
+        "xci_path": "ip/design_2_proc_sys_reset_1_0/design_2_proc_sys_reset_1_0.xci",
+        "inst_hier_path": "proc_sys_reset_1",
+        "has_run_ip_tcl": "true"
       }
     },
     "interface_nets": {
@@ -1704,10 +1719,22 @@
           "myip_0/s00_axi_aclk"
         ]
       },
+      "processing_system7_0_FCLK_CLK1": {
+        "ports": [
+          "processing_system7_0/FCLK_CLK1",
+          "proc_sys_reset_1/slowest_sync_clk"
+        ]
+      },
       "processing_system7_0_FCLK_RESET0_N": {
         "ports": [
           "processing_system7_0/FCLK_RESET0_N",
           "proc_sys_reset_0/ext_reset_in"
+        ]
+      },
+      "processing_system7_0_FCLK_RESET1_N": {
+        "ports": [
+          "processing_system7_0/FCLK_RESET1_N",
+          "proc_sys_reset_1/ext_reset_in"
         ]
       }
     },

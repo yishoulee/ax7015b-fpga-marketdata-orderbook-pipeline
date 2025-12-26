@@ -1,0 +1,38 @@
+
+****** Software Commandline Tool (XSCT) v2025.1.0
+  **** SW Build 6140146 on Wed May 21 17:37:51 MDT 2025
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+
+
+Warning: XSCT is deprecated and will be removed in future releases.
+We recommend using the new Python command-line tool for project management and debugging:
+- Run "vitis -i" for interactive mode.
+- Run "vitis -s <script>" for script mode.
+=== connect ===
+tcfchan#0
+=== targets ===
+  1  APU
+     2  ARM Cortex-A9 MPCore #0 (Running)
+     3  ARM Cortex-A9 MPCore #1 (Running)
+  4  xc7z015
+=== target -set 1 ===
+  1* APU
+     2  ARM Cortex-A9 MPCore #0 (Running)
+     3  ARM Cortex-A9 MPCore #1 (Running)
+  4  xc7z015
+=== memmap before ===
+No memory regions currently set for the active target during this session
+
+
+=== memmap add 0x43C00000 64KB ===
+=== memmap after ===
+Address             Size      Offset    Flags   FileName            
+=======             ====      ======    =====   ========            
+0x43c00000          0x10000   0x0       3                           
+=== reads/writes ===
+43C00000:   00000000
+
+43C00004:   6BCFF228
+
+=== done ===
