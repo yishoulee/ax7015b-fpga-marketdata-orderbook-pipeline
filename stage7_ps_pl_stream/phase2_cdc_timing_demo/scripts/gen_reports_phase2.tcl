@@ -1,4 +1,14 @@
-open_project stage7_ps_pl_stream/phase1_ps_pl/axi_lite_proof/axi_lite_proof_vivado/axi_lite_proof_vivado.xpr
+set script_dir [file dirname [file normalize [info script]]]
+
+# scripts/ -> phase2_cdc_timing_demo/ -> phase7_ps_pl_stream/ -> (then) phase1_ps_pl/...
+set xpr [file normalize [file join $script_dir .. .. .. phase1_ps_pl axi_lite_proof axi_lite_proof_vivado axi_lite_proof_vivado.xpr]]
+
+if {![file exists $xpr]} {
+  puts "ERROR: .xpr not found: $xpr"
+  exit 1
+}
+
+open_project $xpr
 
 # Ensure we are looking at implemented design
 reset_run impl_1
