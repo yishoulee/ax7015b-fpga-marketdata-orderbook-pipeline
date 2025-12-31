@@ -9,6 +9,13 @@ This folder packages a reproducible, deterministic “demo-ready” pipeline ste
 
 Current scope for this README: **PS replay -> FIFO loopback -> output file -> checksum proof**.
 
+## Quick demo (Phase 3 loopback)
+
+```bash
+cd stage7_ps_pl_stream/phase3_demo_ready
+./scripts/run_demo_loopback.sh
+```
+
 ## Folder layout
 
 - `data/`
