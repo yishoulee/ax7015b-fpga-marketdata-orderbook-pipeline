@@ -139,3 +139,6 @@ ENV/
 # If you later decide to version boot images, uncomment these:
 # !**/BOOT.bin
 # !**/*.bif
+
+
+stage7_ps_pl_stream/phase3_demo_ready/data/*.loopback.bin
