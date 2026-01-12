@@ -148,16 +148,16 @@ This repo tracks only reproducible sources:
 * RTL (`.v`, `.sv`), constraints (`.xdc`), IP metadata (`.xci`), scripts (`.tcl`, `.py`), docs
 * Generated Vivado artifacts are intentionally not tracked (`.Xil/`, `*.runs/`, generated bit/dcp/log caches)
 
-## Roadmap (next concrete step)
+## Architecture diagrams
 
-Phase 3 delivers a deterministic PS->PL replay boundary plus a PL-visible checkpoint.
+### Repo map
+![Repo map](docs/diagrams/repo_map.png)
 
-Next work (Phase 4+) should keep the same discipline:
+### Phase 3 demo datapath
+![Phase 3 datapath](docs/diagrams/phase3_datapath.png)
 
-* preserve the deterministic replay harness
-* swap the loopback path for a real PL datapath (orderbook / top-of-book)
-* compare PL output against a CPU reference for a bounded window
-* keep “one command -> PASS/FAIL + one metric” as the contract
+### Phase 1–4 narrative
+![Phase narrative](docs/diagrams/narrative.png)
 
 ## Disclaimer
 
