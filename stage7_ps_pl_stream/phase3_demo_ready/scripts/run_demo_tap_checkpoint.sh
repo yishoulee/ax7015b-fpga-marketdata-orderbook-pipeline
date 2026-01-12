@@ -90,12 +90,30 @@ before_pkts="$(echo "${tap_before}" | get_field TAP_pkt_count)"
 echo
 
 echo "=== replay (FIFO) ==="
+t0_ns=$(date +%s%N)
+
 xsct "${SCRIPT_DIR}/xsct_replay_events_loopback.tcl" \
   -base "${FIFO_BASE}" \
   -in  "${IN_BIN}" \
   -out "${OUT_LOOP}" \
   -chunk_records "${CHUNK_RECORDS}"
+
+t1_ns=$(date +%s%N)
+elapsed_ns=$((t1_ns - t0_ns))
+
+elapsed_s=$(python3 - <<PY
+print(${elapsed_ns} / 1e9)
+PY
+)
+
+events_per_s=$(python3 - <<PY
+print(${total_records} / (${elapsed_ns} / 1e9))
+PY
+)
+
+echo "metric: elapsed_s=${elapsed_s} events_per_s=${events_per_s} (events=${total_records})"
 echo
+
 
 echo "=== TAP after ==="
 tap_after="$(read_tap)"
