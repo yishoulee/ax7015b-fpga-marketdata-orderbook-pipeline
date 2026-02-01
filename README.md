@@ -9,7 +9,6 @@ This repo is organized as independent stages so each milestone is runnable, test
 If you just want the reproducible demo artifact:
 
 ```bash
-git checkout phase3-demo-ready
 ./stage7_ps_pl_stream/phase3_demo_ready/scripts/run_demo_tap_checkpoint.sh
 ```
 

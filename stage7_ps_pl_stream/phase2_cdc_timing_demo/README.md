@@ -85,7 +85,7 @@ Run the minimal smoke test script and capture the output into a log file under `
 Example:
 ```bash
 xsct stage7_ps_pl_stream/phase2_cdc_timing_demo/scripts/fifo_loopback_smoke_min.tcl -base <FIFO_BASE_ADDR>
-````
+```
 
 PASS condition:
 

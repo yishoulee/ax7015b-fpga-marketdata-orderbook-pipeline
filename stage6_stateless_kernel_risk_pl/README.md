@@ -18,15 +18,20 @@ logic of the earlier stages.
 1. Build and program Stage 6 bitstream in Vivado with `top_stage6_strategy`.
 2. On the host, replay the tiny depth log over UART:
 
+   ```bash
    cd stage2_feed_replay
    make replay LOG=../stage4_depth/sw_tools/binance_depth_tiny.log \
-        MODE=realtime UART=/dev/ttyUSB0 BAUD=115200
+     MODE=realtime UART=/dev/ttyUSB0 BAUD=115200
+   ```
 
 3. Export the ILA capture as `scripts/stage6_ila_tiny.csv`.
 
 4. From `stage6_stateless_kernel_risk_pl/scripts`:
 
-   python stage6_actions_compare.py
+    ```bash
+    cd stage6_stateless_kernel_risk_pl/scripts
+    python3 stage6_actions_compare.py
+    ```
 
 The script prints CPU and FPGA action counts and a match ratio
 (first action currently: 1.000 match ratio).
@@ -76,14 +81,16 @@ The script prints CPU and FPGA action counts and a match ratio
 
 Stage 6 is checked against a CPU reference using a fixed tiny Binance depth log.
 
+Gotcha: due to ILA depth vs UART replay speed, the current capture only contains a single
+`strat_valid` pulse. This is expected and does not indicate a functional failure.
+
 - `scripts/depth_cpu_normalizer.py` builds a fixed-point order book and depth events.
 - `scripts/stage6_actions_compare.py`:
   - replays `scripts/binance_depth_tiny.log` into the CPU model,
   - decodes Stage 6 ILA captures (`stage6_ila_tiny_*.csv`) into scaled price/qty,
   - compares CPU vs FPGA strategy outputs `(side, price_fp, qty_fp)`.
 
-Due to ILA depth vs UART speed, the current capture only contains a single
-`strat_valid` pulse. The compare script reports:
+The compare script reports:
 
 - CPU actions: 49
 - FPGA actions: 1

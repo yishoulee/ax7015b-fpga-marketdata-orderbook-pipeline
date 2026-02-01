@@ -6,7 +6,7 @@ Stage 2 is a **host-side** Python harness. It does not run on the FPGA. It:
 2. Replays the captured log as fixed-size 32-byte binary records over UART to the AX7015B.
 3. Provides a simple inspection tool for sanity-checking the log content.
 
-Depth log files (for example `binance_depth.log`) are **generated at runtime**. You control the path via the `LOG` make variable or by running the Python modules directly. The log itself does not need to be tracked in Git.
+Depth log files (for example `binance_depth.log`) are **generated at runtime**. Capture writes to the path configured in `capture/config.py` (`LOG_FILE`) (unless you explicitly wire in a `LOG` override); replay/inspect always use the `LOG=` path you pass. The log itself does not need to be tracked in Git.
 
 ## Layout
 
@@ -71,10 +71,10 @@ make install
 
 # Start continuous BTCUSDT depth capture
 make capture
-# This writes to the default LOG path from capture/config.py (and/or LOG variable).
+# This writes to the path from capture/config.py (LOG_FILE). LOG= does not affect capture unless you wire it in.
 ```
 
-If you want a specific path, set `LOG` in `capture/config.py` (the capture script itself does not take a CLI `--log` argument; path is configured in code).
+If you want a specific capture path, change `LOG_FILE` in `capture/config.py` (the capture script itself does not take a CLI `--log` argument; the path is configured in code).
 
 ### 2. Inspect a log
 
